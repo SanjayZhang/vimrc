@@ -18,10 +18,16 @@ Plugin 'altercation/vim-colors-solarized'   " theme solarized
 Plugin 'scrooloose/nerdtree'                " file/directory treee
 Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'jszakmeister/markdown2ctags'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/nerdcommenter'           " code commenter
 Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'terryma/vim-expand-region'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'godlygeek/tabular'
+Plugin 'scrooloose/nerdcommenter'           " code commenter
+Plugin 'tpope/vim-fugitive'
 " Custom Plugin End
 
 " All of your Plugins must be added before the following line
@@ -40,7 +46,7 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 " Settings
-" forbid cursor blink
+" Forbid cursor blink
 set gcr=a:block-blinkon0
 set laststatus=2
 set ruler
@@ -88,9 +94,12 @@ set fileformats=unix,dos
 set autoread
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <Leader>w :w!<CR>
+" Fast quit
+nmap <Leader>q :q<CR>
+nmap <Leader>Q :q!<CR>
 
-" :W sudo saves the file 
+" :W sudo saves the file
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
 
@@ -101,40 +110,48 @@ set noswapfile
 
 
 " Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-H> <C-W>h
+map <C-L> <C-W>l
 
 " A buffer becomes hidden when it is abandoned
 set hid
 
 " Close the current buffer
-map <leader>bd :bdelete<cr>
+map <Leader>bd :bdelete<CR>
 
 " Close all the buffers
-map <leader>ba :bufdo bd<cr>
+map <Leader>ba :bufdo bd<CR>
 
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
+map <Leader>bn :bnext<CR>
+map <Leader>bp :bprevious<CR>
 
 
 " Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove 
-map <leader>t<leader> :tabnext 
+map <Leader>t<Leader> :tabnew<CR>
+map <Leader>to :tabonly<CR>
+map <Leader>tc :tabclose<CR>
+map <Leader>tm :tabmove<CR>
+map <Leader>tn :tabnext<CR>
+map <Leader>tp :tabprevious<CR>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+map <Leader>te :tabedit <C-R>=expand("%:p:h")<CR>/
+
+map <Leader>co ggVGy:tabnew<CR>:set syntax=qf<CR>pgg
+
+" Cope
+map <Leader>bc :botright cope<CR>
+map <Leader>n :cn<CR>
+map <Leader>p :cp<CR>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
+map <Leader>cd :cd %:p:h<CR>:pwd<CR>
 
 
 " Turn on the wild menu
@@ -152,37 +169,40 @@ endif
 set clipboard=unnamed
 set pastetoggle=<F10>
 
+" Toggle paste mode on and off
+map <Leader>pp :setlocal paste!<CR>
+
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 "set whichwrap+=<,>,h,l
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+nmap <M-J> mz:m+<CR>`z
+nmap <M-K> mz:m-2<CR>`z
+vmap <M-J> :m'>+<CR>`<my`>mzgv`yo`z
+vmap <M-K> :m'<-2<CR>`>my`<mzgv`yo`z
 
 if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
+  nmap <D-J> <M-J>
+  nmap <D-K> <M-K>
+  vmap <D-J> <M-J>
+  vmap <D-K> <M-K>
 endif
 
 " => Parenthesis/bracket
-vnoremap $( <esc>`>a)<esc>`<i(<esc>
-vnoremap $[ <esc>`>a]<esc>`<i[<esc>
-vnoremap ${ <esc>`>a}<esc>`<i{<esc>
-vnoremap $$ <esc>`>a"<esc>`<i"<esc>
-vnoremap $' <esc>`>a'<esc>`<i'<esc>
-vnoremap $" <esc>`>a"<esc>`<i"<esc>
+vnoremap $( <Esc>`>a)<Esc>`<i(<Esc>
+vnoremap $[ <Esc>`>a]<Esc>`<i[<Esc>
+vnoremap ${ <Esc>`>a}<Esc>`<i{<Esc>
+vnoremap $$ <Esc>`>a"<Esc>`<i"<Esc>
+vnoremap $' <Esc>`>a'<Esc>`<i'<Esc>
+vnoremap $" <Esc>`>a"<Esc>`<i"<Esc>
 " Map auto complete of (, ", ', [
-inoremap $( ()<esc>i
-inoremap $[ []<esc>i
-inoremap ${ {}<esc>i
-inoremap $} {<esc>o}<esc>O
-inoremap $' ''<esc>i
-inoremap $" ""<esc>i
+inoremap $( ()<Esc>i
+inoremap $[ []<Esc>i
+inoremap ${ {}<Esc>i
+inoremap $} {<Esc>o}<Esc>O
+inoremap $' ''<Esc>i
+inoremap $" ""<Esc>i
 
 " Show matching brackets when text indicator is over them
 set showmatch
@@ -191,52 +211,64 @@ set matchtime=2
 
 
 " Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+map <Leader>ss :setlocal spell!<CR>
 
-" Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
+" Shortcuts using <Leader>
+map <Leader>sn ]s
+map <Leader>sp [s
+map <Leader>sa zg
+map <Leader>s? z=
 
 
 " Search
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
-map <c-space> ?
+map <Space> /
+map <C-Space> ?
 
-" Disable highlight when <leader><cr> is pressed
-map <silent> <leader><cr> :noh<cr>
+" Disable highlight when <Leader><CR> is pressed
+map <silent> <Leader>/ :noh<CR>
 
 " Ignore case when searching
 set ignorecase
 
-" When searching try to be smart about cases 
+" When searching try to be smart about cases
 set smartcase
 
 " Highlight search results
 set hlsearch
 
 " Makes search act like search in modern browsers
-set incsearch 
+set incsearch
 
 " For regular expressions turn magic on
 set magic
 
+
+" COMMAND-LINE MODE
+" Bash like keys for the command line
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
+
+
 " NERDTree
 " Open NERDTree
-map <C-n> :NERDTreeToggle<CR>
-map <leader>nt :NERDTreeToggle<cr>
-map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeFind<cr>
+map <F1> :NERDTreeToggle<CR>
+map <Leader>nn :NERDTreeToggle<CR>
+map <Leader>nt :NERDTreeToggle<CR>
+map <Leader>nb :NERDTreeFromBookmark<Space>
+map <Leader>nf :NERDTreeFind<CR>
 " Open NERDTree automatically when vim starts up on opening a directory
-autocmd StdinReadPre * let s:std_in=1
+autocmd StdinReadPre * let s:std_in = 1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-let g:NERDTreeWinSize=30
+let g:NERDTreeWinSize = 30
 " Change default arrows
 let g:NERDTreeDirArrowExpandable = '+'
 let g:NERDTreeDirArrowCollapsible = '-'
-" NeRDTree git  
+
+" NeRDTree git
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "*",
     \ "Staged"    : "+",
@@ -249,10 +281,34 @@ let g:NERDTreeIndicatorMapCustom = {
     \ 'Ignored'   : "~",
     \ "Unknown"   : "?"
     \ }
+
+" Tagbar
+nmap <C-F12> :TagbarToggle<CR>
+" Autofocus on tagbar open
+let g:tagbar_autofocus = 1
+" Add support for markdown files in tagbar.
+let g:tagbar_type_markdown = {
+    \ 'ctagstype': 'markdown',
+    \ 'ctagsbin' : '~/.vim/bundle/markdown2ctags/markdown2ctags.py',
+    \ 'ctagsargs' : '-f - --sort=yes',
+    \ 'kinds' : [
+        \ 's:sections',
+        \ 'i:images'
+    \ ],
+    \ 'sro' : '|',
+    \ 'kind2scope' : {
+        \ 's' : 'section',
+    \ },
+    \ 'sort': 0,
+\ }
+
 " Airline
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme="solarized"
+let g:airline_theme = "solarized"
+"let g:airline_powerline_fonts = 1
+
 " Ctrlp
+let g:ctrlp_map = '<Leader><Space>'
 let g:ctrlp_working_path_mode = 'ra'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
@@ -264,8 +320,22 @@ let g:ctrlp_custom_ignore = {
   \ 'link': 'some_bad_symbolic_links',
   \ }
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+
 " Indent Guides
 let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level=2
-let g:indent_guides_guide_size=1
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
 nmap <silent> <Leader>i <Plug>IndentGuidesToggle
+
+" Multiple Cursors
+let g:multi_cursor_next_key = '<C-N>'
+let g:multi_cursor_prev_key = '<C-P>'
+let g:multi_cursor_skip_key = '<C-X>'
+let g:multi_cursor_quit_key = '<Esc>'
+
+let g:multi_cursor_start_key = '<C-N>'
+let g:multi_cursor_start_word_key = 'g<C-N>'
+
+" NERD Commenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
