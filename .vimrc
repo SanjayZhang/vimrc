@@ -51,8 +51,12 @@ set gcr=a:block-blinkon0
 set laststatus=2
 set ruler
 set number
+
 set cursorline
+autocmd WinEnter * set cursorline
+autocmd WinLeave * set nocursorline
 "set cursorcolumn
+
 " Disable scrollbars (real hackers don't use scrollbars for navigation!)
 set guioptions-=r
 set guioptions-=R
@@ -188,6 +192,13 @@ if has("mac") || has("macunix")
   vmap <D-J> <M-J>
   vmap <D-K> <M-K>
 endif
+
+nnoremap [e  :<C-U>execute 'move -1-'. v:count1<CR>
+nnoremap ]e  :<C-U>execute 'move +'. v:count1<CR>
+
+" Fast add space
+nnoremap [<Space>  :<C-U>put! =repeat(nr2char(10), v:count1)<CR>'[
+nnoremap ]<Space>  :<C-U>put =repeat(nr2char(10), v:count1)<CR>
 
 " => Parenthesis/bracket
 vnoremap $( <Esc>`>a)<Esc>`<i(<Esc>
