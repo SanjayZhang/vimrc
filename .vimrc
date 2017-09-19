@@ -14,6 +14,7 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 " Custom Plugin Start
+Plugin 'WinterXMQ/escalt.vim'               " Get Alt key to work in terminal
 Plugin 'altercation/vim-colors-solarized'   " theme solarized
 Plugin 'scrooloose/nerdtree'                " file/directory treee
 Plugin 'Xuyuanp/nerdtree-git-plugin'
@@ -148,8 +149,8 @@ map <Leader>co ggVGy:tabnew<CR>:set syntax=qf<CR>pgg
 
 " Cope
 map <Leader>bc :botright cope<CR>
-map <Leader>n :cn<CR>
-map <Leader>p :cp<CR>
+map <Leader>cn :cn<CR>
+map <Leader>cp :cp<CR>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -181,16 +182,16 @@ set backspace=eol,start,indent
 "set whichwrap+=<,>,h,l
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-J> mz:m+<CR>`z
-nmap <M-K> mz:m-2<CR>`z
-vmap <M-J> :m'>+<CR>`<my`>mzgv`yo`z
-vmap <M-K> :m'<-2<CR>`>my`<mzgv`yo`z
+nmap <M-j> mz:m+<CR>`z
+nmap <M-k> mz:m-2<CR>`z
+vmap <M-j> :m'>+<CR>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<CR>`>my`<mzgv`yo`z
 
 if has("mac") || has("macunix")
-  nmap <D-J> <M-J>
-  nmap <D-K> <M-K>
-  vmap <D-J> <M-J>
-  vmap <D-K> <M-K>
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
 endif
 
 nnoremap [e  :<C-U>execute 'move -1-'. v:count1<CR>
@@ -254,14 +255,24 @@ set incsearch
 " For regular expressions turn magic on
 set magic
 
+cnoremap %% <C-R>=escape(expand('%:h').'/', ' ')<CR>
+noremap <Leader>ff :vimgrep /<C-R><C-W>/g <C-R>=escape(getcwd().'/', ' ')<CR>**<CR>:copen<CR>
+noremap <Leader>fw :vimgrep /<C-R><C-W>/g <C-R>=escape(getcwd().'/', ' ')<CR>**
+noremap <Leader>fc :vimgrep /<C-R><C-W>/g <C-R>=escape(expand('%:h').'/', ' ')<CR>**
 
 " COMMAND-LINE MODE
 " Bash like keys for the command line
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
+cnoremap <M-b> <S-Left>
+cnoremap <M-f> <S-Right>
+cnoremap <C-B> <Left>
+cnoremap <C-F> <Right>
 
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
+
+cnoremap <C-D> <Del>
 
 
 " NERDTree
@@ -350,3 +361,13 @@ let g:multi_cursor_start_word_key = 'g<C-N>'
 " NERD Commenter
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
+" Conflict with the map of cope, so map this
+nmap <silent> <Leader>ce <plug>NERDCommenterNested
+
+if has('win32')
+  nmap <C-/> <Leader>c<Space>
+  vmap <C-/> <Leader>c<Space>
+else
+  nmap <C-_> <Leader>c<Space>
+  vmap <C-_> <Leader>c<Space>
+endif
