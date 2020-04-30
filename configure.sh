@@ -4,7 +4,7 @@ set -eo pipefail
 app_name="vim-config"
 repo_uri="https://github.com/sanjayz09/vimrc.git"
 repo_name="vim-config"
-repo_path="$HOME/.vim/vim-config"
+repo_path="$HOME/.vim/"
 repo_branch="master"
 repo_vundle_name="vundle"
 repo_vundle_uri="https://github.com/VundleVim/Vundle.vim.git"
@@ -138,11 +138,14 @@ install_for_vim() {
     backup "$HOME/.vimrc"
     ret="$?"
 
-    ln -sf "$repo_path/.vimrc" "$HOME/.vimrc"
+    ln -sf "$repo_path/conf/general.vim" "$HOME/.vimrc"
 }
 
 install_for_vim_with_plugin() {
-    install_for_vim
+    backup "$HOME/.vimrc"
+    ret="$?"
+
+    ln -sf "$repo_path/init.vim" "$HOME/.vimrc"
     install_plugins "vim"
 }
 
@@ -157,9 +160,9 @@ install() {
 
 uninstall() {
     rm -f "$HOME/.vimrc"
-    rm -rf $repo_path
     rm -rf $repo_vundle_path
     rm -rf $bundle_path
+    rm -rf $repo_path
 }
 
 ###############################
