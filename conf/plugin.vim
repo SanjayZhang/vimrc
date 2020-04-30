@@ -23,11 +23,15 @@ Plugin 'majutsushi/tagbar'
 Plugin 'jszakmeister/markdown2ctags'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'Yggdroot/indentLine'
+Plugin 'easymotion/vim-easymotion'
 Plugin 'terryma/vim-expand-region'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'godlygeek/tabular'
+Plugin 'tpope/vim-surround'
 Plugin 'scrooloose/nerdcommenter'           " code commenter
+" Plugin 'aklt/plantuml-syntax'
+Plugin 'vimscript/plantuml'
 Plugin 'tpope/vim-fugitive'
 " Custom Plugin End
 
@@ -50,7 +54,7 @@ filetype plugin indent on    " required
 " NERDTree
 " Open NERDTree
 map <F1> :NERDTreeToggle<CR>
-map <Leader>nn :NERDTreeToggle<CR>
+map <Leader>nn :NERDTreeFocus<CR>
 map <Leader>nt :NERDTreeToggle<CR>
 map <Leader>nb :NERDTreeFromBookmark<Space>
 map <Leader>nf :NERDTreeFind<CR>
@@ -64,17 +68,17 @@ let g:NERDTreeDirArrowCollapsible = '-'
 
 " NeRDTree git
 let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "*",
+    \ "Modified"  : "~",
     \ "Staged"    : "+",
-    \ "Untracked" : "u",
-    \ "Renamed"   : "->",
+    \ "Untracked" : "*",
+    \ "Renamed"   : "»",
     \ "Unmerged"  : "=",
     \ "Deleted"   : "-",
     \ "Dirty"     : "!",
-    \ "Clean"     : "c",
-    \ 'Ignored'   : "~",
+    \ "Clean"     : "ø",
+    \ 'Ignored'   : "∙",
     \ "Unknown"   : "?"
-    \ }
+\ }
 
 " Tagbar
 nmap <C-F12> :TagbarToggle<CR>
@@ -107,19 +111,21 @@ let g:ctrlp_working_path_mode = 'ra'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 
-"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(exe|so|dll)$',
   \ 'link': 'some_bad_symbolic_links',
-  \ }
+\ }
+
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
-" Indent Guides
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-nmap <silent> <Leader>i <Plug>IndentGuidesToggle
+" IndentLine
+let g:indentLine_char = '│'
+" Vim
+let g:indentLine_color_term = 239
+" None X terminal
+let g:indentLine_color_tty_light = 7 " (default: 4)
+let g:indentLine_color_dark = 1 " (default: 2)
 
 " Multiple Cursors
 let g:multi_cursor_next_key = '<C-N>'
@@ -143,3 +149,30 @@ else
   nmap <C-_> <Leader>c<Space>
   vmap <C-_> <Leader>c<Space>
 endif
+
+" PlantUML Syntax
+" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
+"
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!g++ % -o %<"
+        exec "!time ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<"
+        exec "!time ./%<"
+    elseif &filetype == 'java'
+        exec "!javac %"
+        exec "!time java %<"
+    elseif &filetype == 'sh'
+        :!time bash %
+    elseif &filetype == 'python'
+        exec "!time python2.7 %"
+    elseif &filetype == 'html'
+        exec "!chrome % &"
+    elseif &filetype ==  'mkd'
+        exec "!~/.vim/Markdown.pl % > %.html &"
+        ecec "!chrome %.html &"
+    endif
+endfunc
