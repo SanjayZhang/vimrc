@@ -10,7 +10,7 @@ repo_vundle_name="vundle"
 repo_vundle_uri="https://github.com/VundleVim/Vundle.vim.git"
 repo_vundle_path="$HOME/.vim/bundle/Vundle.vim"
 bundle_path="$HOME/.vim/bundle"
-_with_plugin=
+_no_plugin=
 _update=
 _uninstall=
 
@@ -18,7 +18,7 @@ help() {
 cat << EOF
     usage: $0 [OPTIONS]
         --help          Show this message
-        --with-plugin   Config Vim with plguin
+        --no-plugin     Config Vim no plguin
         --update        Update
         --uninstall     Uninstall
 EOF
@@ -30,7 +30,7 @@ for opt in "$@"; do
             help
             exit 0
             ;;
-        --with-plugin)  _with_plugin=1
+        --no-plugin)    _no_plugin=1
             ;;
         --update)       _update=1
             ;;
@@ -131,7 +131,7 @@ install_plugins() {
         eval "$exe +PluginInstall +qall"
     done
     ret="$?"
-    success "Successfully installed plugins via vim-plug"
+    success "Successfully installed plugins via vundle"
 }
 
 install_for_vim() {
@@ -150,12 +150,13 @@ install_for_vim_with_plugin() {
 }
 
 install() {
-    if [ ! -z "$_with_plugin" ]; then
-        sync_repo_vundle
-        install_for_vim_with_plugin
+    if [ ! -z "$_no_plugin" ]; then
+        install_for_vim
         return
     fi
-    install_for_vim
+
+    sync_repo_vundle
+    install_for_vim_with_plugin
 }
 
 uninstall() {
