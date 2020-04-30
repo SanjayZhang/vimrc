@@ -8,6 +8,7 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 " Settings
+let mapleader="\<Space>"
 " Forbid cursor blink
 set gcr=a:block-blinkon0
 set laststatus=2
@@ -195,8 +196,8 @@ map <Leader>s? z=
 
 " Search
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <Space> /
-map <C-Space> ?
+" map <Space> /
+" map <C-Space> ?
 
 " Disable highlight when <Leader><CR> is pressed
 map <silent> <Leader>/ :noh<CR>
